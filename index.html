@@ -203,6 +203,8 @@
                 });
             })
         cena.open();
+        
+        // Posição sol
         obj1 = {tipo: 'manha'};
         var cena1 = gui.addFolder( 'Posição sol' );
         cena1.add(obj1, 'tipo', [ 'manha', 'meio dia', 'tarde' ] )
@@ -221,8 +223,8 @@
                     dirLight.position.multiplyScalar(30);
                 }})
         cena1.open();
+        
         // Add controls
-
         var controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.maxPolarAngle = Math.PI / 2;
         controls.minPolarAngle = Math.PI / 3;
