@@ -1,0 +1,249 @@
+<html>
+<!-- HTML5 -->
+<meta charset="utf-8"/>
+<head>
+
+    <title> Aplicativo VR - Reforma Residencia</title>
+    <style>
+        html, body {
+            overflow: hidden;
+            width: 90%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #renderCanvas {
+            width: 95%;
+            height: 95%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="myCanvas"></canvas>
+    <script src="three.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/108/three.min.js'></script>
+    <script src="GLTFLoader.js"></script>
+    <script src='https://threejs.org/examples/js/controls/OrbitControls.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js"></script>
+
+    <script>
+        var theModel;
+        var renderer,
+            scene,
+            camera,
+            myCanvas = document.getElementById('myCanvas');
+
+        //RENDERER
+        renderer = new THREE.WebGLRenderer({
+            canvas: myCanvas,
+            antialias: true
+        });
+        renderer.shadowMap.enabled = true;
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+
+        document.body.appendChild(renderer.domElement);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        var cameraFar = 20;
+
+
+        //CAMERA
+        var camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = -50;
+        camera.position.x = 30;
+        camera.position.y = 50;
+        //SCENE
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color().setHSL(0.6, 0, 1);
+        scene.fog = new THREE.Fog(scene.background, 1, 5000);
+
+
+
+        // LIGHTS
+
+        hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 10); //10
+        hemiLight.position.set(0, 50, 0);
+        scene.add(hemiLight);
+
+
+        dirLight = new THREE.DirectionalLight(0xffffff, 3);   //3
+        dirLight.color.setHSL(0.1, 1, 0.95);
+        dirLight.position.set(1.75,1.75,1.75);
+        dirLight.position.multiplyScalar(30);
+        scene.add(dirLight);
+        dirLight.castShadow = true;
+
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+
+        var d = 50;
+
+        dirLight.shadow.camera.left = - d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = - d;
+
+        dirLight.shadow.camera.far = 3500;
+        dirLight.shadow.bias = - 0.0001;
+
+
+
+        /////////
+        var loader = new THREE.GLTFLoader();
+        loader.load('Modeloaberto.gltf', function (gltf) {
+            theModel = gltf.scene;
+            mesh = gltf.scene.getObjectByName("Quarto");
+            //var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+            gltf.scene.receiveShadow = true;
+            gltf.scene.castShadow = true;
+            theModel.traverse(o => {
+                if (o.isMesh) {
+                    o.castShadow = true;
+                    o.receiveShadow = true;
+                    //o.material = newMaterial;}
+                }}
+            );
+            theModel.position.x =-2;
+            theModel.position.y =-6;
+            theModel.position.z =7;
+            scene.add(theModel);
+            var params = {
+                color: 0xffffff
+            };
+
+            // Cor da parede
+            var folder = gui.addFolder( 'Cor parede' );
+            folder.addColor( params, 'color' )
+                .onChange( function() {
+
+                    var newMaterial = new THREE.MeshStandardMaterial({color:params.color});
+                    mesh.traverse(o => {
+                            if (o.isMesh) {
+                                o.castShadow = true;
+                                o.receiveShadow = true;
+                                o.material = newMaterial;}
+                        }
+                    );
+                    mesh.position.x =-2;
+                    mesh.position.y =-6;
+                    mesh.position.z =7;
+                    scene.add(mesh);}
+                );
+            folder.open()
+
+
+        }, undefined, function (error) {
+            console.error(error);
+        })
+
+        // Cenas
+        var gui = new dat.GUI();
+        var obj = {tipo: '1'};
+        var cena = gui.addFolder( 'Cenas' );
+        cena.add(obj, 'tipo', [ '1', '2', '3' ] )
+            .onChange( function() {
+                scene.remove(theModel)
+                scene.remove(mesh)
+                if(obj.tipo== '1'){
+                    modelo='Modeloaberto.gltf'
+                }else if(obj.tipo== '2'){
+                    modelo='fechado1.gltf'
+                } else if(obj.tipo== '3'){
+                    modelo='fechado2.gltf'
+                }
+
+                loader.load(modelo, function (gltf) {
+                    theModel = gltf.scene;
+                    mesh = gltf.scene.getObjectByName("Quarto");
+                    //var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
+                    gltf.scene.receiveShadow = true;
+                    gltf.scene.castShadow = true;
+                    theModel.traverse(o => {
+                        if (o.isMesh) {
+                            o.castShadow = true;
+                            o.receiveShadow = true;
+                            //o.material = newMaterial;}
+                        }}
+                    );
+                    theModel.position.x =-2;
+                    theModel.position.y =-6;
+                    theModel.position.z =7;
+                    scene.add(theModel);
+                    var params = {
+                        color: 0xffffff
+                    };
+
+                    // Cor da parede
+                    var folder = gui.addFolder( 'Cor parede' );
+                    folder.addColor( params, 'color' )
+                        .onChange( function() {
+
+                            var newMaterial = new THREE.MeshStandardMaterial({color:params.color});
+                            mesh.traverse(o => {
+                                    if (o.isMesh) {
+                                        o.castShadow = true;
+                                        o.receiveShadow = true;
+                                        o.material = newMaterial;}
+                                }
+                            );
+                            mesh.position.x =-2;
+                            mesh.position.y =-6;
+                            mesh.position.z =7;
+                            scene.add(mesh);}
+                        );
+                    folder.open()
+
+
+                }, undefined, function (error) {
+                    console.error(error);
+                });
+            })
+        cena.open();
+        obj1 = {tipo: 'manha'};
+        var cena1 = gui.addFolder( 'Posição sol' );
+        cena1.add(obj1, 'tipo', [ 'manha', 'meio dia', 'tarde' ] )
+            .onChange( function() {
+                if(obj1.tipo== 'manha'){
+                    dirLight.color.setHSL(0.1, 1, 0.95);
+                    dirLight.position.set(1.75,1.75,1.75);
+                    dirLight.position.multiplyScalar(30);
+                }else if(obj1.tipo== 'meio dia'){
+                    dirLight.color.setHSL(0.1, 1, 0.95);
+                    dirLight.position.set(0,1.75,0);
+                    dirLight.position.multiplyScalar(30);
+                } else if(obj1.tipo== 'tarde'){
+                    dirLight.color.setHSL(0.1, 1, 0.95);
+                    dirLight.position.set(-1.75,1.75,-1.75);
+                    dirLight.position.multiplyScalar(30);
+                }})
+        cena1.open();
+        // Add controls
+
+        var controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.maxPolarAngle = Math.PI / 2;
+        controls.minPolarAngle = Math.PI / 3;
+        controls.enableDamping = true;
+        controls.enablePan = false;
+        controls.dampingFactor = 0.5;
+        controls.autoRotate = false; // Toggle this if you'd like the chair to automatically rotate
+        controls.autoRotateSpeed = 0.8; // 30
+        controls.zoomSpeed = 10;
+
+        //RENDER LOOP
+        render();
+
+        function render() {
+           // controls.update();
+
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
+
+
+
+    </script>
+</body>
+</html>
