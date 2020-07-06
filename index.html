@@ -23,9 +23,9 @@
 <body>
 
     <canvas id="myCanvas"></canvas>
-    <script src="three.js"></script>
+    <script src="https://raw.githubusercontent.com/willianmayrink/Three.js_APP_Modify_HouseGLTF/master/three.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/108/three.min.js'></script>
-    <script src="GLTFLoader.js"></script>
+    <script src="https://raw.githubusercontent.com/willianmayrink/Three.js_APP_Modify_HouseGLTF/master/GLTFLoader.js"></script>
     <script src='https://threejs.org/examples/js/controls/OrbitControls.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js"></script>
 
@@ -91,9 +91,9 @@
 
 
 
-        /////////
+        // CENA INICIAL AO CARREGAR A PAGINA
         var loader = new THREE.GLTFLoader();
-        loader.load('Modeloaberto.gltf', function (gltf) {
+        loader.load('https://raw.githubusercontent.com/willianmayrink/Three.js_model-/master/Modeloaberto.gltf', function (gltf) {
             theModel = gltf.scene;
             mesh = gltf.scene.getObjectByName("Quarto");
             //var newMaterial = new THREE.MeshStandardMaterial({color: 0xff0000});
@@ -106,7 +106,8 @@
                     //o.material = newMaterial;}
                 }}
             );
-            theModel.position.x =-2;
+            
+            theModel.position.x =-2; // position at room
             theModel.position.y =-6;
             theModel.position.z =7;
             scene.add(theModel);
@@ -127,7 +128,7 @@
                                 o.material = newMaterial;}
                         }
                     );
-                    mesh.position.x =-2;
+                    mesh.position.x =-2; 
                     mesh.position.y =-6;
                     mesh.position.z =7;
                     scene.add(mesh);}
@@ -148,11 +149,11 @@
                 scene.remove(theModel)
                 scene.remove(mesh)
                 if(obj.tipo== '1'){
-                    modelo='Modeloaberto.gltf'
+                    modelo='https://raw.githubusercontent.com/willianmayrink/Three.js_model-/master/Modeloaberto.gltf'
                 }else if(obj.tipo== '2'){
-                    modelo='fechado1.gltf'
+                    modelo='https://raw.githubusercontent.com/willianmayrink/Three.js_model-/master/fechado1.gltf'
                 } else if(obj.tipo== '3'){
-                    modelo='fechado2.gltf'
+                    modelo='https://raw.githubusercontent.com/willianmayrink/Three.js_model-/master/fechado2.gltf'
                 }
 
                 loader.load(modelo, function (gltf) {
